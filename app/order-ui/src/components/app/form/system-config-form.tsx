@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQueryClient } from '@tanstack/react-query'
 import {
@@ -14,6 +14,7 @@ import { ISystemConfig } from '@/types'
 import { ConfigDropdown } from '@/app/system/config'
 import { showToast } from '@/utils'
 import { ButtonLoading } from '../loading'
+import { CopyIcon } from '@radix-ui/react-icons'
 
 // Component con để quản lý hàng mới
 const NewConfigRow = ({
@@ -32,8 +33,8 @@ const NewConfigRow = ({
   t: (key: string) => string
 }) => (
   <div className="grid grid-cols-9 gap-2">
-    <div className="grid items-center w-full grid-cols-2 col-span-8 gap-2">
-      <div className="flex flex-col w-full gap-2">
+    <div className="col-span-8 grid w-full grid-cols-2 items-center gap-2">
+      <div className="flex w-full flex-col gap-2">
         <Label>{t('config.key')}</Label>
         <Input
           value={config.key}
@@ -41,7 +42,7 @@ const NewConfigRow = ({
           placeholder="Enter key"
         />
       </div>
-      <div className="flex flex-col w-full gap-2">
+      <div className="flex w-full flex-col gap-2">
         <Label>Value</Label>
         <Input
           value={config.value}
@@ -50,7 +51,7 @@ const NewConfigRow = ({
         />
       </div>
     </div>
-    <div className="flex items-end justify-end col-span-1 gap-2">
+    <div className="col-span-1 flex items-end justify-end gap-2">
       <Button
         variant="outline"
         onClick={() => onRemove(config.slug)}
@@ -80,35 +81,40 @@ const NewConfigRow = ({
 )
 
 // Component con để quản lý hàng đã lưu
-const ConfigRow = ({ config }: { config: ISystemConfig }) => (
-  <div className="flex flex-col gap-2 p-2 bg-white border rounded-md lg:flex-row">
-    {/* Left */}
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-2">
-        <div className="col-span-1 p-2 bg-gray-100 rounded-full h-fit w-fit">
-          <ChevronsLeftRight size={18} />
+const ConfigRow = ({ config }: { config: ISystemConfig }) => {
+  const handleCopyClick = (value: string) => {
+    navigator.clipboard.writeText(value)
+  }
+  return (
+    <div className="flex flex-col gap-2 rounded-md border bg-white p-2 lg:flex-row">
+      {/* Left */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="col-span-1 h-fit w-fit rounded-full bg-gray-100 p-2">
+            <ChevronsLeftRight size={18} />
+          </div>
+          <span className="col-span-3 text-sm">{config.key}</span>
         </div>
-        <span className="col-span-3 text-sm">{config.key}</span>
+        <div className="col-span-1 flex items-end justify-end gap-2 lg:hidden">
+          <ConfigDropdown systemConfig={config} />
+        </div>
       </div>
-      <div className="flex items-end justify-end col-span-1 gap-2 lg:hidden">
+      {/* Center */}
+      <div className="flex items-center justify-between gap-3 px-4">
+        {/* Value */}
+        <span className="col-span-6 text-sm">{config.value}</span>
+        <CopyIcon
+          className="cursor-pointer"
+          onClick={() => handleCopyClick(config.value)}
+        />
+      </div>
+      {/* Action */}
+      <div className="col-span-1 ml-auto hidden items-end justify-end gap-2 lg:flex">
         <ConfigDropdown systemConfig={config} />
       </div>
     </div>
-    {/* Center */}
-    <div className="flex items-center justify-between gap-3">
-      {/* Value */}
-      <span className="col-span-6 text-sm">{config.value}</span>
-      {/* Created at */}
-      {/* <span className="flex justify-end col-span-2 text-xs text-muted-foreground">
-        {moment(config.createdAt).format('hh:mm DD/MM/YYYY')}
-      </span> */}
-    </div>
-    {/* Action */}
-    <div className="items-end justify-end hidden col-span-1 gap-2 ml-auto lg:flex">
-      <ConfigDropdown systemConfig={config} />
-    </div>
-  </div>
-)
+  )
+}
 
 export const SystemConfigForm: React.FC = () => {
   const queryClient = useQueryClient()
@@ -215,9 +221,9 @@ export const SystemConfigForm: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col w-full gap-4">
+    <div className="flex w-full flex-col gap-4">
       {/* Khu vực thêm mới */}
-      <div className="pb-4 border-b border-gray-300">
+      <div className="border-b border-gray-300 pb-4">
         <h3 className="mb-4 text-lg font-semibold">Add New Configuration</h3>
         <div className="grid w-full gap-2">
           {newConfigs.map((config) => (

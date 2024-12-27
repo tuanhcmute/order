@@ -36,6 +36,7 @@ import { sidebarRoutes } from '@/router/routes'
 import { ISidebarRoute } from '@/types'
 import { Logo } from '@/assets/images'
 import { cn } from '@/lib'
+import { ROUTE } from '@/constants'
 
 export default function AppSidebar() {
   const { t } = useTranslation('sidebar')
@@ -72,13 +73,16 @@ export default function AppSidebar() {
   return (
     <Sidebar
       variant="inset"
-      className="z-50 border-r shadow-2xl bg-slate-50 shadow-gray-300"
+      className="z-50 border-r bg-slate-50 shadow-2xl shadow-gray-300"
       collapsible="icon"
     >
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem className="w-full">
-            <NavLink to="/" className="flex items-center justify-center p-2">
+            <NavLink
+              to={ROUTE.DASHBOARD}
+              className="flex items-center justify-center p-2"
+            >
               {state === 'collapsed' ? (
                 <div className="transition-colors duration-200 hover:text-primary">
                   <House size={20} />

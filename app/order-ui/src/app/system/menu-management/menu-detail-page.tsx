@@ -26,7 +26,7 @@ export default function MenuDetailPage() {
   }
 
   return (
-    <div>
+    <div className="mb-5">
       <div className="mb-4 flex w-full items-center gap-1 text-lg">
         <SquareMenu />
         {t('menu.title')}
